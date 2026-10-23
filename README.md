@@ -1,50 +1,91 @@
-# European Power Market Analytics Platform (work in progress)
+# European Power Market Analytics
 
-Day-ahead forecasting of German wind generation, built to mirror work done on an energy trading desk.
-Status: data checks, the wind forecasting model and the battery back-test are done. Dashboard, pipeline automation and LLM agent are still to come.
+Day-ahead forecasting of German wind generation, a day-ahead price model, and a back-test of a virtual battery,
+built to mirror work on an energy trading desk.
+
+**Live dashboard:** https://powermarketanalytics-vkfkcqzzrlx3kammfanaqj.streamlit.app/
+
+## Headline results
+
+All numbers are from a final test period (April to September 2026) that was never used for tuning.
+Models are evaluated with walk-forward validation: each month is predicted by a model trained only on earlier data.
+
+**Wind generation, day-ahead (4,392 test hours)**
+
+| Model | MAE (MW) | RMSE (MW) | MAE vs ENTSO-E |
+|---|---|---|---|
+| ENTSO-E day-ahead forecast (benchmark) | 1,387 | 2,194 | - |
+| Hybrid: ENTSO-E forecast + learned correction | 1,323 | 2,025 | -4.6% |
+| Weather-based model (8 locations) | 2,182 | 3,070 | +57% |
+| Simple power curve | 2,754 | 3,953 | +99% |
+| Persistence (2 days ago) | 8,781 | 11,381 | +533% |
+
+The hybrid model's MAE is lower than ENTSO-E's on 55% of days; the 95% bootstrap interval for the difference is
+-117 to -19 MW. The weather-based model alone does **not** beat ENTSO-E.
+
+**Virtual battery (1 MW / 2 MWh) in the day-ahead market, test period, 181 days**
+
+| Strategy | Total profit | Share of perfect foresight |
+|---|---|---|
+| Perfect foresight (upper limit) | EUR 54,859 | 100% |
+| Model | EUR 53,934 (EUR 298/day) | 98% |
+| Naive: yesterday's prices | EUR 51,809 | 94% |
+| Naive: last week's prices | EUR 50,851 | 93% |
+
+The model earns about EUR 12 per day more than the "yesterday" baseline (95% interval EUR 6 to 19). Hourly price error is
+21 EUR/MWh versus 33 for the best naive baseline. Assumptions: 88% round-trip efficiency, 2 EUR/MWh on every MWh traded,
+one full cycle per day, price taker. Results across efficiency 80-92% and costs 0-4 EUR/MWh are in `results/backtest_sensitivity.csv`.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A[SMARD: prices, load, generation] --> D[Cleaning and UTC conversion]
+    B[Open-Meteo: day-ahead weather forecasts, 8 locations] --> D
+    C[ENTSO-E: forecasts and actuals] --> D
+    G[TTF gas and EUA carbon closes] --> D
+    D --> F[Features with strict information cut-off]
+    F --> W[Wind model: walk-forward, baselines, ENTSO-E hybrid]
+    F --> P[Day-ahead price model: walk-forward]
+    P --> S[Battery scheduler: dynamic programming]
+    S --> R[Back-test: profit, drawdown, sensitivity]
+    W --> O[results/ files]
+    R --> O
+    O --> UI[Streamlit dashboard]
+```
+
+## Method
+
+- **No look-ahead.** A forecast for day D is made before the day-ahead auction closes (12:00 CET on D-1). Features built
+  from actual generation or prices stop before that cut-off; gas and carbon use the close dated D-2 or earlier. Automated
+  tests (`tests/`) scramble future data and check that no feature changes, including on 23- and 25-hour clock-change days.
+- **Walk-forward validation.** Each month is predicted by a model retrained on all earlier data, with a 2-day gap.
+  Settings were chosen on April 2025 to March 2026 only (`results/dev_experiments.csv`, `results/backtest_dev.csv`).
+- **Benchmark.** ENTSO-E's own published day-ahead wind forecast, evaluated against ENTSO-E actual generation.
+- **Reproducible.** Re-running the scripts from a clean folder gives identical results.
 
 ## Run it
+
 1. `pip install -r requirements.txt`
-2. Put your raw files in `data/raw/` (not included): `entsoe/*.csv` (from `download_entsoe.py`),
-   `weather/weather_previous_runs_day1.csv` (from `download_weather.py`), `smard/*.csv` (SMARD downloads),
-   `fuels/` (TTF gas and EUA carbon daily CSV exports from Investing.com).
-3. `python tests/test_no_leakage.py`        # checks no future data enters the features
-4. `python scripts/01_dev_experiments.py`    # development experiments (about 7 minutes)
-5. `python scripts/02_final_evaluation.py`   # final test, tables and figures (about 3 minutes)
+2. Put raw files in `data/raw/` (not included): `entsoe/`, `weather/`, `smard/`, `fuels/` (see `src/pmp/data.py`).
+3. `python tests/test_no_leakage.py`, `python tests/test_battery.py`, `python tests/test_price_no_leakage.py`
+4. `python scripts/01_dev_experiments.py`, `python scripts/02_final_evaluation.py` (wind model)
+5. `python scripts/03_price_model.py`, `python scripts/04_backtest.py` (price model and battery back-test)
+6. `streamlit run app.py` (needs only the files in `results/`)
 
-6. `python tests/test_battery.py` and `python tests/test_price_no_leakage.py`   # checks for the back-test
-7. `python scripts/03_price_model.py`        # walk-forward day-ahead price model (about 1.5 minutes)
-8. `python scripts/04_backtest.py`           # battery back-test with the final test (about 1 minute);
-   add `--dev-only` to see only the development period
+## Limitations
 
-Results are written to `results/`. Set `PMP_RAW_DIR` to read data from another folder.
+- The weather-based wind model is clearly worse than ENTSO-E; only the hybrid beats it, by a modest margin.
+- ENTSO-E's forecast may be published after the auction closes, so the hybrid may not have been usable live.
+- Weather inputs are one forecast model's "day before" run at 8 points; the model is chosen automatically by the API.
+- Most battery profit comes from the daily price shape, which naive forecasts also capture. The Sharpe ratio is not a
+  meaningful risk measure here because every day was profitable.
+- SMARD gives hourly averages, while the day-ahead market has traded in 15-minute blocks since October 2025.
+- 2026 spreads were unusually wide after the March 2026 gas price spike; profit per day should not be extrapolated.
+- Not modelled: investment cost, grid fees, market impact, battery wear beyond a flat cost.
+- Wind capacity is approximated from recent peak output, not real installed capacity.
 
-## Method in one paragraph
-Walk-forward validation: for each month the model is retrained on all earlier data (2-day gap) and
-predicts that month. Settings were chosen on April 2025 to March 2026 only; April to September 2026
-is a final test used once. Weather inputs are day-ahead forecasts (Open-Meteo Previous Runs API) at 8
-German locations. Features from actual generation only use data older than the forecast cut-off.
-The benchmark is ENTSO-E's own published day-ahead wind forecast.
+## Still to come
 
-## Back-test in one paragraph
-A virtual 1 MW / 2 MWh battery trades the German day-ahead market: each day it charges in the hours predicted to be
-cheapest and discharges in the hours predicted to be dearest (one full cycle per day, 88% round-trip efficiency,
-2 EUR/MWh on every MWh traded), and is paid the actual hourly price. Prices are predicted from forecast residual load
-(load minus wind minus solar), gas and carbon closes (only those dated two days before delivery or earlier) and
-earlier prices. The variant was picked on April 2025 to March 2026; April to September 2026 is the final test.
-
-## Known limitations
-- The weather-only model is clearly worse than ENTSO-E; only the hybrid (ENTSO-E forecast plus a learned
-  correction) beats it, by a modest margin.
-- ENTSO-E's forecast may be published after the day-ahead auction closes; check before claiming this
-  model could have been used live.
-- Weather forecasts are one model's "day before" run, with the model chosen automatically by the API.
-- Back-test: most of the profit comes from the daily price shape (solar dip, evening peak), which even naive
-  forecasts capture (94% of the perfect-foresight profit vs 98% for the model). The Sharpe ratio is not a meaningful risk
-  measure here: every day is profitable. Real risks are shrinking spreads as storage grows, 15-minute products
-  (SMARD gives hourly averages), outages, and costs not modelled (investment, grid fees, market impact).
-- 2026 spreads were unusually wide after the March 2026 gas price spike; do not extrapolate the profit per day.
-
-## Dashboard
-`streamlit run app.py` (needs only the files in `results/`, not the raw data).
-Deploy free: push the repo to GitHub, then on share.streamlit.io choose the repo, branch `main` and file `app.py`.
+Automated data pipeline, methodology document, an R version of one analysis, and an LLM agent that extracts structured
+signals from energy news.
