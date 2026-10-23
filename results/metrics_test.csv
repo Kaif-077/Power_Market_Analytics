@@ -1,0 +1,7 @@
+,n,MAE,RMSE,bias,MAE_pct_of_mean,MAE_vs_entsoe_pct,RMSE_vs_entsoe_pct
+entsoe_benchmark,4392.0,1387.3,2194.4,55.4,10.9,0.0,0.0
+persistence_48h,4392.0,8781.3,11381.3,65.0,69.1,533.0,418.6
+power_curve,4392.0,2753.5,3953.0,-54.8,21.7,98.5,80.1
+gbm_weather_only,4392.0,2177.8,3059.3,-347.5,17.1,57.0,39.4
+gbm_weather_plus_obs,4392.0,2182.1,3069.5,-322.1,17.2,57.3,39.9
+hybrid_entsoe_correction,4392.0,1323.3,2025.2,27.9,10.4,-4.6,-7.7

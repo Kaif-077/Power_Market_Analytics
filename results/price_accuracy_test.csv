@@ -1,0 +1,4 @@
+,n,MAE,RMSE,bias,MAE_pct_of_mean
+model_level,4387.0,21.2,32.1,-13.7,19.2
+naive_yesterday,4387.0,33.0,53.7,-0.1,29.9
+naive_lastweek,4387.0,41.7,65.1,-2.7,37.8
