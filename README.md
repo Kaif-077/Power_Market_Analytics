@@ -68,7 +68,7 @@ flowchart LR
 
 1. `pip install -r requirements.txt`
 2. Put raw files in `data/raw/` (not included): `entsoe/`, `weather/`, `smard/`, `fuels/` (see `src/pmp/data.py`).
-3. `python tests/test_no_leakage.py`, `python tests/test_battery.py`, `python tests/test_price_no_leakage.py`
+3. `python tests/test_no_leakage.py`, `python tests/test_battery.py`, `python tests/test_price_no_leakage.py`, `python tests/test_agent.py`
 4. `python scripts/01_dev_experiments.py`, `python scripts/02_final_evaluation.py` (wind model)
 5. `python scripts/03_price_model.py`, `python scripts/04_backtest.py` (price model and battery back-test)
 6. `streamlit run app.py` (needs only the files in `results/`)
@@ -85,7 +85,12 @@ flowchart LR
 - Not modelled: investment cost, grid fees, market impact, battery wear beyond a flat cost.
 - Wind capacity is approximated from recent peak output, not real installed capacity.
 
+## LLM agent
+
+`llm_agent/` extracts structured signals (event type, fuel, country, MW, planned or unplanned, dates, price direction)
+from news and outage notices, with a validate-and-retry loop and a keyword baseline. See `llm_agent/README.md`.
+Its evaluation on real, hand-labelled notices is still to be done.
+
 ## Still to come
 
-Automated data pipeline, methodology document, an R version of one analysis, and an LLM agent that extracts structured
-signals from energy news.
+Automated data pipeline, methodology document, and an R version of one analysis.
