@@ -1,0 +1,2 @@
+id,source,text,event_type,fuel,zone,capacity_mw,status,direction,start_time,end_time
+0,EXAMPLE (delete or ignore this row),"Unit 3 of the Westhafen lignite plant in Germany (660 MW) tripped on 12 March 2026 and is expected back on 15 March 2026.",plant_outage,lignite,DE,660,unplanned,up,2026-03-12,2026-03-15
