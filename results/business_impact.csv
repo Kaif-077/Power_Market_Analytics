@@ -1,0 +1,4 @@
+model,hours,abs_error_GWh,abs_error_MWh_per_day,cost_at_5_EUR_per_MWh_MEUR,cost_at_10_EUR_per_MWh_MEUR,cost_at_20_EUR_per_MWh_MEUR,cost_at_30_EUR_per_MWh_MEUR,vs_entsoe_at_5_MEUR,vs_entsoe_at_10_MEUR,vs_entsoe_at_20_MEUR,vs_entsoe_at_30_MEUR
+ENTSO-E day-ahead,4392,6093.1,33296.0,30.47,60.93,121.86,182.79,,,,
+Hybrid (ENTSO-E + correction),4392,5811.9,31759.0,29.06,58.12,116.24,174.36,-1.41,-2.81,-5.62,-8.43
+Weather-based model,4392,9583.9,52371.0,47.92,95.84,191.68,287.52,17.45,34.91,69.82,104.73

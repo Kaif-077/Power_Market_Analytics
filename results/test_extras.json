@@ -1,0 +1,29 @@
+{
+ "bootstrap_vs_entsoe": {
+  "hybrid_entsoe_correction": {
+   "days": 183,
+   "mean_MAE_diff": -64.02373911116253,
+   "ci95_low": -117.43198130479527,
+   "ci95_high": -19.267853046509263,
+   "share_days_model_better": 0.546448087431694
+  },
+  "gbm_weather_only": {
+   "days": 183,
+   "mean_MAE_diff": 790.4919919345259,
+   "ci95_low": 655.8135643206549,
+   "ci95_high": 923.1649477278479,
+   "share_days_model_better": 0.1366120218579235
+  },
+  "gbm_weather_plus_obs": {
+   "days": 183,
+   "mean_MAE_diff": 794.8171528031527,
+   "ci95_low": 658.8264234409478,
+   "ci95_high": 929.1767668539003,
+   "share_days_model_better": 0.1366120218579235
+  }
+ },
+ "interval_80": {
+  "coverage": 0.7513661202185792,
+  "mean_width_MW": 3626.9145440970638
+ }
+}
