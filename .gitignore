@@ -1,0 +1,9 @@
+data/raw/
+.env
+__pycache__/
+*.pyc
+results/*.log
+
+# real notices: keep the text local, publish only the results
+llm_agent/data/real_notices.jsonl
+my_notices.csv

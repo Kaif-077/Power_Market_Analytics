@@ -1,0 +1,4 @@
+actual,entsoe_benchmark,gbm_weather_plus_obs,hybrid_entsoe_correction
+low wind,807.0,1373.0,804.0
+medium wind,1318.0,2217.0,1307.0
+high wind,2037.0,2956.0,1859.0

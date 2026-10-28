@@ -1,0 +1,21 @@
+{
+ "event_type": 0.974,
+ "fuel": 0.974,
+ "zone": 0.868,
+ "status": 0.658,
+ "direction": 0.947,
+ "capacity_mw": 0.947,
+ "start_time": 0.763,
+ "end_time": 0.711,
+ "key_fields_all_correct": 0.895,
+ "n": 38,
+ "answered": 38,
+ "grounded_evidence_rate": 1.0,
+ "provider": "gemini",
+ "model": "gemini-3.1-flash-lite",
+ "input_tokens": 13327,
+ "output_tokens": 4283,
+ "share_needing_retry": 0.0,
+ "failed_validation": 0,
+ "failures": []
+}

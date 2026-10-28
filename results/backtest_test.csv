@@ -1,0 +1,5 @@
+,days,total_EUR,mean_EUR_per_day,std_EUR_per_day,sharpe_annualised,max_drawdown_EUR,worst_day_EUR,share_days_profitable,capture_of_perfect_foresight
+perfect,181.0,54858.65,303.09,163.01,35.52,0.0,37.28,1.0,1.0
+model_level,181.0,53934.28,297.98,162.72,34.99,0.0,30.72,1.0,0.98
+naive_yesterday,181.0,51809.41,286.24,165.2,33.1,-103.47,-103.47,0.99,0.94
+naive_lastweek,181.0,50850.56,280.94,158.58,33.85,0.0,15.24,1.0,0.93

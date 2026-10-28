@@ -1,0 +1,15 @@
+experiment,n,MAE,RMSE,bias,MAE_pct_of_mean
+ENTSO-E benchmark,8760,1386.0,1869.5,-68.1,8.5
+persistence 48h,8760,9736.3,12552.2,-2.7,59.7
+power curve (isotonic),8760,3251.9,4515.4,-2055.9,19.9
+"gbm weather+obs, raw target",8760,2343.5,3107.7,-843.8,14.4
+"gbm weather+obs, capacity-factor target",8760,2365.6,3149.5,-774.7,14.5
+"gbm weather+obs, cf target, recency half-life 180d",8760,2389.9,3181.8,-797.4,14.7
+"gbm slim features, cf target",8760,2368.5,3161.9,-602.5,14.5
+"gbm slim features, cf target, recency 180d",8760,2388.6,3198.7,-677.4,14.6
+"gbm weather-only, cf target",8760,2378.1,3166.6,-740.4,14.6
+hybrid direct (cf target),8760,1427.7,1925.8,-47.4,8.8
+"hybrid residual, leaves15 iter400 lr.05",8760,1353.9,1810.5,71.2,8.3
+"hybrid residual, leaves7 iter200 lr.03 msl100  [FROZEN]",8760,1341.1,1784.7,81.4,8.2
+"hybrid residual, leaves15 iter150 lr.03 msl100",8760,1338.5,1788.0,91.7,8.2
+"hybrid residual, leaves7 iter400 lr.02 msl200 l2=5",8760,1339.3,1783.0,86.6,8.2
