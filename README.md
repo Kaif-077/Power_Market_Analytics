@@ -5,6 +5,8 @@ built to mirror work on an energy trading desk.
 
 **Live dashboard:** https://powermarketanalytics-vkfkcqzzrlx3kammfanaqj.streamlit.app/
 
+**Live companion project:** [German_Wind_Live](https://github.com/Kaif-077/German_Wind_Live) forecasts German wind power every day before the day happens and keeps a public scoreboard ([dashboard](https://germanwindlive-k4mdpla26whsvxwsfttvlc.streamlit.app/)). It started on 30 October 2026, so its track record is still short.
+
 ## Headline results
 
 All numbers are from a final test period (April to September 2026) that was never used for tuning.
@@ -82,7 +84,7 @@ flowchart LR
 ## Limitations
 
 - The weather-based wind model is clearly worse than ENTSO-E; only the hybrid beats it, by a modest margin.
-- Publication timing, measured on two days with `probe.py` (`results/entsoe_publication_check.csv`): ENTSO-E's day-ahead wind and solar forecast for the next day was missing at 12:08 and 14:04 German time on 26 October and at 13:22 on 27 October, and present at 18:20 on 26 October, so it appeared after the 12:00 auction close. The load forecast was already there at 12:08 and 13:22. The hybrid model therefore uses information a trader would not have had before the auction; the exact publication time is only narrowed to between 14:04 and 18:20.
+- Publication timing, measured on two days with `probe.py` (`results/entsoe_publication_check.csv`): ENTSO-E's day-ahead wind and solar forecast for the next day was missing at 12:08 and 14:04 German time on 26 October and at 13:22 on 27 October, and present at 18:20 on 26 October, so it appeared after the 12:00 auction close. The load forecast was already there at 12:08 and 13:22. The hybrid model therefore uses information a trader would not have had before the auction; the exact publication time is only narrowed to between 14:04 and 18:20. The live companion project's daily log later saw it first appear between 15:57 and 17:52 UTC (16:57 to 18:52 German time) on 31 October, again after the auction close.
 - Weather inputs are one forecast model's "day before" run at 8 points; the model is chosen automatically by the API.
 - Most battery profit comes from the daily price shape, which naive forecasts also capture. The Sharpe ratio is not a
   meaningful risk measure here because every day was profitable.
